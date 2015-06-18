@@ -1,0 +1,317 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Pso extends CI_Controller {
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->load->helper('url');
+        $this->PARTICLE_COUNT = 6;
+        $this->V_MAX = 8;
+        $this->MAX_EPOCH = 10000;
+        $this->CITY_COUNT = 8;
+        $this->TARGET = 86.63;
+        $this->particles = [];
+        $this->map = [];
+        $this->XLocs = [30, 40, 40, 29, 19, 9, 9, 20];  //City X coordinate
+        $this->YLocs = [5, 10, 20, 25, 25, 19, 9, 5];   //City Y coordinate
+        $this->totalEpoch = 0;
+    }
+    public function index()
+    {        
+        $this->initMap();
+        $this->PSOAlgorithm();
+        $this->printBestSolution();
+    }    
+
+    public function initMap()
+    {
+        for($i = 0; $i < $this->CITY_COUNT; $i++)
+        {
+            $city = new CCity();
+            $city->setX($this->XLocs[$i]);
+            $city->setY($this->YLocs[$i]);
+
+            array_push($this->map, $city);
+        }
+    }
+
+    public function PSOAlgorithm(){
+        $aParticle = null;
+        $epoch = 0;
+        $done = FALSE;
+
+        $this->initialize();
+
+        while(!$done)
+        {
+            // Two conditions can end this loop:
+            //    if the maximum number of epochs allowed has been reached, or,
+            //    if the Target value has been found.
+            if($epoch < $this->MAX_EPOCH){
+                for($i = 0; $i < $this->PARTICLE_COUNT; $i++){
+                    $aParticle = $this->particles[$i];
+                    echo "Route: ";
+                    for($j = 0; $j < $this->CITY_COUNT; $j++){
+                        echo $aParticle->data($j)."-";
+                    }
+
+                    $this->getTotalDistance($i);
+                    echo "Distance: ".$aParticle->pBest().'<br>';
+                    if($aParticle->pBest() <= $this->TARGET){
+                        $done = TRUE;
+                    }
+                }
+
+                $this->bubbleSort(); // sort particles by their pBest scores, best to worst.
+
+                $this->getVelocity();
+
+                $this->updateParticle();
+
+                echo "epoch number".$epoch."<br><br>";
+
+                $epoch++;
+            }else{
+                $done = TRUE;
+            }
+
+            $this->totalEpoch = $epoch;
+        }
+    }
+
+    public function printBestSolution(){
+        if($this->particles[0]->pBest() <= $this->TARGET){
+            echo "<h4>Target Reached</h4>";
+        }else{
+            echo "<h4>Target not Reached</h4>";
+        }
+        echo "<h5>Shortest Route:";
+        for($i = 0; $i < $this->CITY_COUNT; $i++){
+                echo $this->particles[0]->data($i)."-";
+        }
+        echo "</h5>";
+        echo "<h5>Distance :".$this->particles[0]->pBest()."</h5>";
+    }
+
+    private function initialize(){
+        for($i = 0; $i < $this->PARTICLE_COUNT; $i++){
+            $newParticle = new Particle();
+
+            for($j = 0; $j < $this->CITY_COUNT; $j++){
+                $newParticle->setData($j, $j);
+            }
+            array_push($this->particles, $newParticle);
+            for($j = 0; $j < 10; $j++){
+                $this->randomlyArrange(array_search($newParticle, $this->particles));
+            }
+            //console.log("cetak " + particles.indexOf(newParticle));
+            $this->getTotalDistance(array_search($newParticle, $this->particles));
+        }
+    }
+
+    private function randomlyArrange($index){
+        $cityA = rand(0, $this->CITY_COUNT - 1);
+        $cityB = 0;
+        $done = FALSE;
+
+        while(!$done){
+            $cityB = rand(0, $this->CITY_COUNT - 1);
+            if($cityB != $cityA)
+                $done = TRUE;
+        }
+
+        $temp = $this->particles[$index]->data($cityA);
+        $this->particles[$index]->setData($cityA, $this->particles[$index]->data($cityB));
+        $this->particles[$index]->setData($cityB, $temp);
+    }
+
+    private function getVelocity(){
+        $worstResult = $this->particles[$this->PARTICLE_COUNT - 1]->pBest();
+
+        for($i = 0; $i < $this->PARTICLE_COUNT; $i++){
+            $vValue = ($this->V_MAX * $this->particles[$i]->pBest()) / $worstResult;
+
+            if($vValue > $this->V_MAX){
+                $this->particles[$i]->setVelocity($this->V_MAX);
+            }elseif($vValue < 0.0){
+                $this->particles[$i]->setVelocity(0.0);
+            }else{
+                $this->particles[$i]->setVelocity($vValue);
+            }
+        }
+    }
+
+    private function updateParticle(){
+        // Best is at index 0, so start from the second best.
+        for($i = 1; $i < $this->PARTICLE_COUNT; $i++){
+            // The higher the velocity score, the more changes it will need.
+            $changes = (int)(floor(abs($this->particles[$i]->velocity())));
+            //console.log("Changes for particle " + i + ": "+changes);
+            for($j = 0; $j < $changes; $j++){
+                if(rand(0,1) == 1)
+                    $this->randomlyArrange($i);
+
+                // Push it closer to it's best neighbor.
+                $this->copyFromParticle($i - 1, $i);
+            }
+
+            // Update pBest value.
+            $this->getTotalDistance($i);
+        }
+    }
+
+    private function copyFromParticle($source, $destination){
+        // push destination's data points closer to source's data points.
+        $best = $this->particles[$source];
+        $targetA = rand(0, $this->CITY_COUNT - 1); // source's city distance to target.
+        $targetB = $indexA = $indexB = $tempIndex = 0;
+
+        // targetB will be source's neighbor immediately succeeding targetA (circular).
+        for($i = 0; $i < $this->CITY_COUNT; $i++){
+            if($best->data($i) == $targetA) {
+                if ($i == $this->CITY_COUNT - 1)
+                    $targetB = $best->data(0); // if end of array, take from beginning.
+                else
+                    $targetB = $best->data($i + 1);
+                break;
+            }
+        }
+
+        // Move targetB next to targetA by switching values.
+        for($j = 0; $j < $this->CITY_COUNT; $j++){
+            if($this->particles[$destination]->data($j) == $targetA)
+                $indexA = $j;
+            if($this->particles[$destination]->data($j) == $targetB)
+                $indexB = $j;
+        }
+
+        // get temp index succeeding indexA.
+        if($indexA == $this->CITY_COUNT - 1)
+            $tempIndex = 0;
+        else
+            $tempIndex = $indexA + 1;
+
+        // Switch indexB value with tempIndex value.
+        $temp = $this->particles[$destination]->data($tempIndex);
+        $this->particles[$destination]->setData($tempIndex, $this->particles[$destination]->data($indexB));
+        $this->particles[$destination]->setData($indexB, $temp);
+    }
+
+    private function getTotalDistance($index){
+        $thisParticle = $this->particles[$index];
+        $thisParticle->setpBest(0.0);
+
+        for($i = 0; $i < $this->CITY_COUNT; $i++){
+            if(($this->CITY_COUNT - 1) == $i){
+                $thisParticle->setpBest($thisParticle->pBest() + $this->getDistance($thisParticle->data($this->CITY_COUNT - 1), $thisParticle->data(0)));
+            }else{
+                $thisParticle->setpBest($thisParticle->pBest() + $this->getDistance($thisParticle->data($i), $thisParticle->data($i+1)));
+            }
+        }
+    }
+
+    private function getDistance($firstCity, $secondCity){
+        $cityA = $cityB = NULL;
+        $a2 = $b2 = 0;
+
+        $cityA = $this->map[$firstCity];
+        $cityB = $this->map[$secondCity];
+        $a2 = pow(abs($cityA->x() - $cityB->x()), 2);
+        $b2 = pow(abs($cityA->y() - $cityB->y()), 2);
+
+        return sqrt($a2 + $b2);
+    }
+
+    private function bubbleSort(){
+        $done = false;
+        while(!$done){
+            $changes = 0;
+            $listSize = count($this->particles);
+
+            for($i = 0; $i < $listSize -1; $i++){
+                if($this->particles[$i]->compareTo($this->particles[$i + 1]) == 1){
+                    $temp = $this->particles[$i];
+                    $this->particles[$i] = $this->particles[$i+1];
+                    $this->particles[$i+1] = $temp;
+                    $changes++;
+                }
+            }
+
+            if($changes == 0){
+                $done = true;
+            }
+        }
+    }
+}
+
+class CCity
+{
+
+    function __construct()
+    {
+        $this->mX = 0;
+        $this->mY = 0;
+    }
+
+    public function x(){
+        return $this->mX;
+    }
+
+    public function y(){
+        return $this->mY;
+    }
+
+    public function setX($xCoordinate){
+        $this->mX = $xCoordinate;
+    }
+
+    public function setY($yCoordinate){
+        $this->mY = $yCoordinate;
+    }
+}
+
+class Particle
+{
+
+    function __construct()
+    {
+        $this->mData = [];
+        $this->mpBest = 0;
+        $this->mVelocity = 0.0;
+    }
+
+    public function compareTo($that){
+        if($this->pBest() < $that->pBest())
+            return -1;
+        elseif($this->pBest() > $that->pBest())
+            return 1;
+        else
+            return 0;
+    }
+
+    public function data($index){
+        return $this->mData[$index];
+    }
+
+    public function setData($index, $value){
+        $this->mData[$index] = $value;
+    }
+
+    public function pBest(){
+        return $this->mpBest;
+    }
+
+    public function setpBest($value){
+        $this->mpBest = $value;
+    }
+
+    public function velocity(){
+        return $this->mVelocity;
+    }
+
+    public function setVelocity($velocityScore){
+        $this->mVelocity = $velocityScore;
+    }
+}

@@ -1,0 +1,76 @@
+		.container.main{
+			margin-top: 50px;
+		}
+		.navbar {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+		}
+		.navbar-default.transparent {
+			background-color: transparent;
+		}
+		.slide1, .slide2, .slide3 {
+			min-height: 560px; /* Must have a height or min-height set due to use of background images */
+			background-size: cover;
+			background-position: center center;
+		}
+		.slide1 {
+			background-image: url('../images/swarm3.jpg');
+		}
+		.slide2 {
+			background-image: url('../images/swarm2.jpg');
+		}
+		.slide3 {
+			background-image: url('../images/swarm4.jpg');
+		}
+		/* Carousel Fade Effect */
+		.carousel.carousel-fade .item {
+			-webkit-transition: opacity 1s linear;
+			-moz-transition: opacity 1s linear;
+			-ms-transition: opacity 1s linear;
+			-o-transition: opacity 1s linear;
+			transition: opacity 1s linear;
+			opacity: .5;
+		}
+		.carousel.carousel-fade .active.item {
+			opacity: 1;
+		}
+		.carousel.carousel-fade .active.left,
+		.carousel.carousel-fade .active.right {
+			left: 0;
+			z-index: 2;
+			opacity: 0;
+			filter: alpha(opacity=0);
+		}
+		/* Carousel Overlay */
+		.carousel-overlay {
+			position: absolute;
+			bottom: 100px;
+			right: 0;
+			left: 0;
+		}
+
+		.carousel-overlay {
+			color: #FFF;
+		}
+
+		.form-group {
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}	
+
+#footer {	
+  position: relative;
+  margin-top: 30px;
+  bottom: 0;
+  width: 100%;
+  background: 
+  /* color overlay */ 
+    linear-gradient(
+      rgba(240, 212, 0, 0.45), 
+      rgba(0, 0, 0, 0.45)
+    ),
+    /* image to overlay */
+    url(http://images.cdn.fotopedia.com/_avPIZmqM3w-7z161LH_268-hd.jpg);
+}
