@@ -19,11 +19,52 @@ class Pso extends CI_Controller {
         $this->totalEpoch = 0;
     }
     public function index()
-    {        
+    {
+        $this->load->model('pso_model');
+        $init = $this->input->get();
+        $init_param = $this->pso_model->get_init_param($init['init_param_id'])->row_array();
+        if($init['particle_count'] > 0){
+            $this->PARTICLE_COUNT = $init['particle_count'];
+        }else{
+            $this->PARTICLE_COUNT = $init_param['particle_count'];
+        }
+        if($init['v_max'] > $init_param['city_count'] || $init['v_max'] < 1){
+            $this->V_MAX = $init_param['v_max'];
+        }else{
+            $this->V_MAX = $init['v_max'];
+        }
+        if($init['max_epoch'] > 0){
+            $this->MAX_EPOCH = $init['max_epoch'];
+        }else{
+            $this->MAX_EPOCH = $init_param['max_epoch'];
+        }
+
+        if(isset($init['target']) && $init['target'] == "Y"){
+            $this->TARGET = $init_param['target'];
+        }else{
+            $this->TARGET = 0;
+        }
+
+        $this->CITY_COUNT = $init_param['city_count'];
+
+        $this->XLocs = [];
+        foreach(explode(',',$init_param['xlocs']) as $x){
+            array_push($this->XLocs, $x);
+        }
+        $this->YLocs = [];
+        foreach(explode(',',$init_param['ylocs']) as $y){
+            array_push($this->YLocs, $y);
+        }
         $this->initMap();
         $this->PSOAlgorithm();
         $this->printBestSolution();
-    }    
+    }
+    public function demo()
+    {
+        $this->initMap();
+        $this->PSOAlgorithm();
+        $this->printBestSolution();
+    }
 
     public function initMap()
     {
@@ -50,11 +91,14 @@ class Pso extends CI_Controller {
             //    if the maximum number of epochs allowed has been reached, or,
             //    if the Target value has been found.
             if($epoch < $this->MAX_EPOCH){
+                echo "<br><br>Iteration number: ".$epoch."<br>";
+
                 for($i = 0; $i < $this->PARTICLE_COUNT; $i++){
                     $aParticle = $this->particles[$i];
+                    echo "Particle <strong>".$aParticle->label()."</strong> ";
                     echo "Route: ";
                     for($j = 0; $j < $this->CITY_COUNT; $j++){
-                        echo $aParticle->data($j)."-";
+                        echo $aParticle->data($j)." - ";
                     }
 
                     $this->getTotalDistance($i);
@@ -69,8 +113,6 @@ class Pso extends CI_Controller {
                 $this->getVelocity();
 
                 $this->updateParticle();
-
-                echo "epoch number".$epoch."<br><br>";
 
                 $epoch++;
             }else{
@@ -98,6 +140,7 @@ class Pso extends CI_Controller {
     private function initialize(){
         for($i = 0; $i < $this->PARTICLE_COUNT; $i++){
             $newParticle = new Particle();
+            $newParticle->setlabel($i+1);
 
             for($j = 0; $j < $this->CITY_COUNT; $j++){
                 $newParticle->setData($j, $j);
@@ -144,11 +187,14 @@ class Pso extends CI_Controller {
     }
 
     private function updateParticle(){
+        echo "Sort :<br>";
+        echo "Best is Particle <strong>".$this->particles[0]->label()."</strong> <strong>Distance: ".$this->particles[0]->pBest().'</strong><br>';
         // Best is at index 0, so start from the second best.
         for($i = 1; $i < $this->PARTICLE_COUNT; $i++){
             // The higher the velocity score, the more changes it will need.
             $changes = (int)(floor(abs($this->particles[$i]->velocity())));
-            //console.log("Changes for particle " + i + ": "+changes);
+            echo "Changes velocity for particle <strong>".$this->particles[$i]->label()."</strong>: ".$changes;
+            echo " <strong>Distance: ".$this->particles[$i]->pBest().'</strong><br>';
             for($j = 0; $j < $changes; $j++){
                 if(rand(0,1) == 1)
                     $this->randomlyArrange($i);
@@ -280,6 +326,7 @@ class Particle
         $this->mData = [];
         $this->mpBest = 0;
         $this->mVelocity = 0.0;
+        $this->label = 0;
     }
 
     public function compareTo($that){
@@ -313,5 +360,13 @@ class Particle
 
     public function setVelocity($velocityScore){
         $this->mVelocity = $velocityScore;
+    }
+
+    public function label(){
+        return $this->label;
+    }
+
+    public function setlabel($value){
+        $this->label = $value;
     }
 }

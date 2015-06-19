@@ -19,7 +19,7 @@
             <label>Particle Count : </label>
           </div>
           <div class="col-md-2">
-            <input type="number" min=2 value=2 class="form-control" name="particle_count" required="required">
+            <input type="number" min=2 value=2 class="form-control" id="custom_particle_count" name="particle_count" required="required">
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
             <label>Maximum Velocity (must be <= than city count) : </label>
           </div>
           <div class="col-md-2">
-            <input type="number" min=1 value=1 class="form-control" name="v_max" required="required">
+            <input type="number" min=1 value=1 class="form-control" id="custom_v_max" name="v_max" required="required">
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
             <label>Maximum Iteration : </label>
           </div>
           <div class="col-md-2">
-            <input type="number" min=1 value=10000 class="form-control" name="max_epoch" required="required">
+            <input type="number" min=1 value=10000 class="form-control" id="custom_max_epoch" name="max_epoch" required="required">
           </div>
         </div>
       </div>
@@ -99,6 +99,15 @@
           </div>
         </div>
       </div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-2">
+                    <label><input type="checkbox" id="custom_target" name="target"> Use Optimal Target</label>
+                </div>
+            </div>
+        </div>
       <div class="row">
         <div class="form-group">
           <div class="col-md-3">          
@@ -128,14 +137,26 @@
             
           </div>
         </div>
-      </div>      
+      </div>
       <div class="row">
         <div class="col-md-10">
-          <button type="button" class="btn btn-success pull-right">Generate Result!</button>
+          <button type="button" id="generate" class="btn btn-success pull-right">Generate Result!</button>
         </div>
       </div>
     </form>
   </div>
+    <div class="panel panel-default" style="margin-top: 20px">
+        <div class="panel-heading"><i class="fa fa-clock-o"></i> Result</div>
+        <div class="panel-body disp-result" style="height: 400px; overflow-y: scroll;">
+            This page is temporarily disabled by the site administrator for some reason.<br> <a href="#">Click here</a> to enable the page.
+        </div>
+        <div class="panel-footer clearfix">
+            <div class="pull-right">
+                <a href="#" class="btn btn-primary">Save Result!</a>
+                <a href="#" class="btn btn-default">Clear</a>
+            </div>
+        </div>
+    </div>
 </div>
 <?php $this->load->view('footer'); ?>
 
@@ -157,6 +178,24 @@
       }, "json");
     }
     filter_init();
+
+    function generate_result() {
+        var data = {
+            'particle_count': $("#custom_particle_count").val(),
+            'v_max' : $("#custom_v_max").val(),
+            'max_epoch' : $("#custom_max_epoch").val(),
+            'init_param_id' : $("#init_param_id").val(),
+            'target' : (($("#custom_target").is(":checked")) ? 'Y' : 'N')
+        };
+        $(".disp-result").html("<i class='fa fa-refresh fa-spin'></i>");
+        $.get("<?php echo base_url().'index.php/pso';?>", data, function (res) {
+            $(".disp-result").html(res);
+        }, "text");
+    }
+
+    $("#generate").on("click", function(){
+        generate_result();
+    });
   });
 </script>
 </body>
