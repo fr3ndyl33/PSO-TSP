@@ -27,4 +27,8 @@ class Page extends CI_Controller {
         $this->output->set_header('Content-Type: application/json; charset=utf-8');
         echo json_encode($this->pso_model->get_init_param($id)->row());
     }
+
+    public function saveResult(){
+        $data = $this->input->get();
+    }
 }

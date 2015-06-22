@@ -25,7 +25,7 @@
         <a class="btn btn-lg btn-success fp-buttons" href="#">
             <span class="fa fa-bar-chart"></span> General Performance Report
         </a>
-        <a class="btn btn-lg btn-danger fp-buttons" href="#">
+        <a class="btn btn-lg btn-danger fp-buttons" href="<?php echo base_url().'index.php/page/pso_action';?>">
             <span class="fa fa-clock-o"></span> See Algorithm in Action
         </a>
     </div>
@@ -60,7 +60,7 @@
   </div> 
   <hr>
   <div class="row text-center">
-  	<a class="btn btn-lg btn-danger" href="#">
+  	<a class="btn btn-lg btn-danger" href="<?php echo base_url().'index.php/page/pso_action';?>">
         <span class="fa fa-clock-o"></span> Let's See the Algorithm in Action!
     </a>
     OR

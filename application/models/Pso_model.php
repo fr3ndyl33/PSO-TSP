@@ -15,5 +15,9 @@ class Pso_model extends CI_Model {
     		$query = $this->db->get('init_param');
         return $query;
     }
+
+    function save_result($param){
+        $this->db->insert('general_result', $param);
+    }
 }
 ?>

@@ -157,6 +157,11 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="latest_route">
+    <input type="hidden" id="latest_distance">
+    <input type="hidden" id="epoch_number">
+    <input type="hidden" id="shortest_route">
+    <input type="hidden" id="shortest_distance">
 </div>
 <?php $this->load->view('footer'); ?>
 

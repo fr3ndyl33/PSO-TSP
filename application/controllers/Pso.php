@@ -18,6 +18,7 @@ class Pso extends CI_Controller {
         $this->YLocs = [5, 10, 20, 25, 25, 19, 9, 5];   //City Y coordinate
         $this->totalEpoch = 0;
     }
+    
     public function index()
     {
         $this->load->model('pso_model');
@@ -55,16 +56,22 @@ class Pso extends CI_Controller {
         foreach(explode(',',$init_param['ylocs']) as $y){
             array_push($this->YLocs, $y);
         }
+
         $this->initMap();
         $this->PSOAlgorithm();
         $this->printBestSolution();
     }
-    public function demo()
-    {
-        $this->initMap();
-        $this->PSOAlgorithm();
-        $this->printBestSolution();
-    }
+
+    public function save_result($init, $init_param){
+        $data = [
+            'init_param_id' => $init['init_param_id'],
+            'v_max'         => $this->V_MAX,
+            'max_epoch'     => $this->MAX_EPOCH,
+            'particle_count'=> $this->PARTICLE_COUNT,
+            'epoch_number'  => $this->totalEpoch,
+            'shortest_route'=> 
+        ];
+    }    
 
     public function initMap()
     {

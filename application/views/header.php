@@ -8,7 +8,7 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" style="font-weight: bold" href="#">Particle Swarm Optimization <small>for Travelling Salesman Problem</small></a>
+	      <a class="navbar-brand" style="font-weight: bold" href="<?php echo base_url();?>">Particle Swarm Optimization <small>for Travelling Salesman Problem</small></a>
 	    </div>
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">	      
