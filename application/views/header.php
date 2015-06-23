@@ -18,10 +18,9 @@
 	        <li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
 	          <ul class="dropdown-menu">
-	            <li><a href="#">General Report</a></li>
+	            <li><a href="<?php echo base_url().'index.php/page/report';?>">General Report</a></li>
+                  <li role="separator" class="divider"></li>
 	            <li><a href="<?php echo base_url().'index.php/page/pso_action';?>">Algorithm's Actions</a></li>
-	            <li role="separator" class="divider"></li>
-	            <li><a href="#">Maps</a></li>
 	          </ul>
 	        </li>
 	      </ul>

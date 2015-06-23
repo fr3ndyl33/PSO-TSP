@@ -140,7 +140,8 @@
       </div>
       <div class="row">
         <div class="col-md-10">
-          <button type="button" id="generate" class="btn btn-success pull-right">Generate Result!</button>
+          <button type="button" id="generate" class="btn btn-primary pull-left">Test Result!</button>
+          <button type="button" id="generate-save" class="btn btn-success pull-right">Generate & Save Result!</button>
         </div>
       </div>
     </form>
@@ -184,8 +185,9 @@
     }
     filter_init();
 
-    function generate_result() {
+    function generate_result(command) {
         var data = {
+            'command': command || null,
             'particle_count': $("#custom_particle_count").val(),
             'v_max' : $("#custom_v_max").val(),
             'max_epoch' : $("#custom_max_epoch").val(),
@@ -201,6 +203,9 @@
     $("#generate").on("click", function(){
         generate_result();
     });
+      $("#generate-save").on("click", function(){
+          generate_result('save');
+      });
   });
 </script>
 </body>

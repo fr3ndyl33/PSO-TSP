@@ -28,7 +28,20 @@ class Page extends CI_Controller {
         echo json_encode($this->pso_model->get_init_param($id)->row());
     }
 
-    public function saveResult(){
-        $data = $this->input->get();
+    public function report(){
+        $this->load->model('pso_model');
+        $data['init_param'] = $this->pso_model->get_init_param();
+        $this->load->view('report', $data);
+    }
+
+    public function reportJSON(){
+        if(isset($_GET['id'])) {
+            $id = $_GET['id'];
+        }else{
+            $id = 1;
+        }
+        $this->load->model('pso_model');
+        $this->output->set_header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($this->pso_model->get_general_result($id)->result());
     }
 }

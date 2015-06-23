@@ -22,7 +22,7 @@
     <div class="container carousel-overlay text-center">
         <h1>Simple Approach of PSO Algorithm for TSP Problem</h1>
         <p class="lead">Simple representation of algorithm performance</p>
-        <a class="btn btn-lg btn-success fp-buttons" href="#">
+        <a class="btn btn-lg btn-success fp-buttons" href="<?php echo base_url().'index.php/page/report';?>">
             <span class="fa fa-bar-chart"></span> General Performance Report
         </a>
         <a class="btn btn-lg btn-danger fp-buttons" href="<?php echo base_url().'index.php/page/pso_action';?>">
@@ -64,7 +64,7 @@
         <span class="fa fa-clock-o"></span> Let's See the Algorithm in Action!
     </a>
     OR
-    <a class="btn btn-lg btn-success" href="#">
+    <a class="btn btn-lg btn-success" href="<?php echo base_url().'index.php/page/report';?>">
         <span class="fa fa-bar-chart"></span> Let's See Our Test Results Report!
     </a>
   </div>

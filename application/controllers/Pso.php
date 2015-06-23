@@ -17,6 +17,8 @@ class Pso extends CI_Controller {
         $this->XLocs = [30, 40, 40, 29, 19, 9, 9, 20];  //City X coordinate
         $this->YLocs = [5, 10, 20, 25, 25, 19, 9, 5];   //City Y coordinate
         $this->totalEpoch = 0;
+        $this->shortestRoute = '';
+        $this->shortestDistance = 0.0;
     }
     
     public function index()
@@ -60,17 +62,24 @@ class Pso extends CI_Controller {
         $this->initMap();
         $this->PSOAlgorithm();
         $this->printBestSolution();
+
+        if($init['command'] == 'save')
+            $this->save_result($init);
     }
 
-    public function save_result($init, $init_param){
+    public function save_result($init){
+        $this->load->model('pso_model');
         $data = [
             'init_param_id' => $init['init_param_id'],
             'v_max'         => $this->V_MAX,
             'max_epoch'     => $this->MAX_EPOCH,
             'particle_count'=> $this->PARTICLE_COUNT,
             'epoch_number'  => $this->totalEpoch,
-            'shortest_route'=> 
-        ];
+            'shortest_route'=> $this->shortestRoute,
+            'shortest_distance'=> $this->shortestDistance
+            ];
+
+        $this->pso_model->save_result($data);
     }    
 
     public function initMap()
@@ -111,6 +120,10 @@ class Pso extends CI_Controller {
                     $this->getTotalDistance($i);
                     echo "Distance: ".$aParticle->pBest().'<br>';
                     if($aParticle->pBest() <= $this->TARGET){
+                        $this->shortestDistance = $aParticle->pBest();
+                        for($j = 0; $j < $this->CITY_COUNT; $j++) {
+                            $this->shortestRoute.= $aParticle->data($j) . ",";
+                        }
                         $done = TRUE;
                     }
                 }
