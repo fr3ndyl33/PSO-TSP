@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Inang: 127.0.0.1
--- Waktu pembuatan: 24 Jun 2015 pada 11.11
+-- Waktu pembuatan: 24 Jun 2015 pada 11.18
 -- Versi Server: 5.5.27
 -- Versi PHP: 5.4.7
 
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `general_result` (
   `shortest_route` varchar(255) NOT NULL,
   `shortest_distance` double NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=881 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=883 ;
 
 --
 -- Dumping data untuk tabel `general_result`
@@ -921,7 +921,9 @@ INSERT INTO `general_result` (`id`, `init_param_id`, `v_max`, `max_epoch`, `part
 (877, 4, 9, 10000, 9, 5247, '6,7,5,8,4,3,2,1,0,9,', 99.608153894167),
 (878, 4, 9, 15000, 10, 945, '2,3,4,8,5,7,6,9,0,1,', 99.608153894167),
 (879, 4, 9, 15000, 10, 1584, '6,9,0,1,2,3,4,8,5,7,', 99.608153894167),
-(880, 4, 9, 15000, 10, 1131, '9,0,1,2,3,4,8,5,7,6,', 99.608153894167);
+(880, 4, 9, 15000, 10, 1131, '9,0,1,2,3,4,8,5,7,6,', 99.608153894167),
+(881, 4, 10, 15000, 10, 874, '1,2,3,4,8,5,7,6,9,0,', 99.608153894167),
+(882, 4, 10, 15000, 10, 2071, '1,2,3,4,8,5,7,6,9,0,', 99.608153894167);
 
 -- --------------------------------------------------------
 
