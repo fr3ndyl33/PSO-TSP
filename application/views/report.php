@@ -89,9 +89,9 @@
             showShadow: false,
             keepAspectRatio: true,
             verticalRatio: 0.5,
-            xLabel: 'Particle Count',
-            yLabel: 'Maximum Velocity',
-            zLabel: 'Iteration'
+            xLabel: 'Maximum Velocity',
+            yLabel: 'Particle Count',
+            zLabel: 'Iteration Number'
         };
 
         // Instantiate our graph object.
@@ -102,6 +102,7 @@
     $(document).ready(function(){
         $.get("<?php echo base_url().'index.php/page/reportJSON';?>", {id: 1}, function (res) {
             drawVisualization(res);
+            $("#info").html(JSON.stringify(res));
         }, "json");
 
         $("#init_param_id").on("change", function(){
@@ -111,6 +112,7 @@
         $("#draw").on("click", function(){
             $.get("<?php echo base_url().'index.php/page/reportJSON';?>", {id: $("#init_param_id").val()}, function (res) {
                 drawVisualization(res);
+                $("#info").html(JSON.stringify(res));
             }, "json");
         });
 
