@@ -5,12 +5,23 @@
 </head>
 <body>	
 	<?php $this->load->view('header'); ?>	
-<div class="container main">
+<div class="container main">  
   <div class="row">
     <h1 class="page-header">
       Custom TSP Problem
     </h1>
   </div>  
+  <div class="alert alert-info">
+    <div class="alert-header">
+      How to Start:
+      <ol type="1">
+        <li>Kolom - kolom yang dapat diisi (Particle Count, Maximum Velocity, Maximum Iteration, Initial Parameter) digunakan untuk merubah inisialisasi 
+        data pencarian</li>
+        <li>Nilai default digunakan hanya bila kolom - kolom yang diisi kurang sesuai atau tidak memiliki nilai.</li>
+        <li>Tombol Test Result! untuk menampilkan hasil test, sedangkan Tombol Generate &amp; Save Result untuk menampilkan hasil test dan disimpan dalam database.
+      </ol>
+    </div>
+  </div>
   <div class="row">
     <form action="#" method="POST">
       <div class="row">
@@ -103,8 +114,9 @@
             <div class="form-group">
                 <div class="col-md-3">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-6">
                     <label><input type="checkbox" id="custom_target" name="target"> Use Optimal Target</label>
+                    <div class="alert alert-info">Optimal target digunakan untuk membatasi jarak minimum yang dicari</div>
                 </div>
             </div>
         </div>
@@ -150,13 +162,7 @@
         <div class="panel-heading"><i class="fa fa-clock-o"></i> Result</div>
         <div class="panel-body disp-result" style="height: 400px; overflow-y: scroll;">
             This page is temporarily disabled by the site administrator for some reason.<br> <a href="#">Click here</a> to enable the page.
-        </div>
-        <div class="panel-footer clearfix">
-            <div class="pull-right">
-                <a href="#" class="btn btn-primary">Save Result!</a>
-                <a href="#" class="btn btn-default">Clear</a>
-            </div>
-        </div>
+        </div>        
     </div>
     <input type="hidden" id="latest_route">
     <input type="hidden" id="latest_distance">
